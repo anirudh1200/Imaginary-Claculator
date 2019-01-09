@@ -23,6 +23,12 @@ export default class App extends Component<Props> {
     input: ''
   }
 
+  calculateResult = () => {
+    const input = this.state.input;
+    // Parse the input
+
+  }
+
   onNumberClick = (recievedNumber) => {
     if(recievedNumber == '='){
       return this.calculateResult();
@@ -60,9 +66,11 @@ export default class App extends Component<Props> {
 
     return (
       <View style={styles.container}>
-          <View style={styles.result}></View>
+          <View style={styles.result}>
+            <Text style={styles.resultText}>111</Text>
+          </View>
           <View style={styles.inputs}>
-            <Text>{this.state.input}</Text>
+            <Text style={styles.inputText}>{this.state.input}</Text>
           </View>
           <View style={styles.buttons}>
             <View style={styles.numbers}>
@@ -84,6 +92,13 @@ const styles = StyleSheet.create({
   result: {
     flex: 2,
     backgroundColor: '#FFFFFF'
+  },
+  inputs: {
+      flex: 1
+  },
+  resultText: {
+    fontSize: 35,
+    
   },
   row: {
     flex: 1,
