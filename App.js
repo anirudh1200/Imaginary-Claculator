@@ -20,17 +20,22 @@ type Props = {};
 export default class App extends Component<Props> {
 
   state = {
-    input: ''
+    input: '',
+    result: '0'
   }
 
   calculateResult = () => {
-    const input = this.state.input;
-    // Parse the input
-
+    let input = this.state.input;
+    if(this.operators.indexOf(input[input.length-1]) !=-1){
+      input = input.slice(0, input.length-1);
+      this.setState({input});
+    }
+    let result = eval(input);
+    this.setState({result});
   }
 
   onNumberClick = (recievedNumber) => {
-    if(recievedNumber == '='){
+    if(recievedNumber === '='){
       return this.calculateResult();
     }
     this.setState({
@@ -38,28 +43,56 @@ export default class App extends Component<Props> {
     })
   }
 
+  operate = (operator) => {
+    let input = this.state.input;
+    if(!input){
+      return;
+    }
+    switch(operator){
+      case 'C': 
+          this.setState({
+            input: '',
+            result: '0'
+          });
+          break;
+      case '<-':
+          this.setState({
+            input: input.slice(0, input.length-1)
+          });
+          break;
+      default:
+          if(this.operators.indexOf(input[input.length-1]) !=-1){
+            return;
+          }
+          this.setState({
+            input: input+operator
+          });
+    }
+  }
+
+  operators = ['C','<-','+', '-', '*', '/'];
+
   render() {
 
     let numRows = [];
     let nums = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ['.', 0, '=']]
-    for(let i=0; i<4; i++){
+    for(let i=0; i<nums.length; i++){
       let row = [];
-      for(let j=0; j<3; j++){
+      for(let j=0; j<nums[i].length; j++){
         row.push(
-          <TouchableOpacity style={styles.btn} onPress={() => this.onNumberClick(nums[i][j])}>
+          <TouchableOpacity style={styles.btn} onPress={() => this.onNumberClick(nums[i][j])} key={j}>
             <Text style={styles.btnText}>{nums[i][j]}</Text>
           </TouchableOpacity>
         );
       }
-      numRows.push(<View style={styles.row}>{row}</View>)
+      numRows.push(<View style={styles.row} key={i}>{row}</View>)
     }
 
     let operatorCols = [];
-    let operators = ['+', '-', '*', '/'];
-    for(let i=0; i<4; i++){
+    for(let i=0; i<this.operators.length; i++){
       operatorCols.push(
-        <TouchableOpacity style={styles.btn}>
-          <Text style={styles.btnText}>{operators[i]}</Text>
+        <TouchableOpacity style={styles.btn} onPress={() => this.operate(this.operators[i])} key={i}>
+          <Text style={styles.btnText}>{this.operators[i]}</Text>
         </TouchableOpacity>
       )
     }
@@ -67,7 +100,7 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
           <View style={styles.result}>
-            <Text style={styles.resultText}>111</Text>
+            <Text style={styles.resultText}>{this.state.result}</Text>
           </View>
           <View style={styles.inputs}>
             <Text style={styles.inputText}>{this.state.input}</Text>
@@ -91,14 +124,13 @@ const styles = StyleSheet.create({
   },
   result: {
     flex: 2,
-    backgroundColor: '#FFFFFF'
-  },
-  inputs: {
-      flex: 1
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    textAlign: 'center'
   },
   resultText: {
     fontSize: 35,
-    
   },
   row: {
     flex: 1,
@@ -111,7 +143,10 @@ const styles = StyleSheet.create({
   },
   inputs: {
     flex: 1,
-    backgroundColor: '#CCCCCC'
+    backgroundColor: '#CCCCCC',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    textAlign: 'center'
   },
   buttons: {
     flex: 7,
@@ -124,14 +159,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   btnText: {
-    fontSize: 25
+    fontSize: 25,
+    color: 'white'
   },
   numbers: {
     flex: 3,
-    backgroundColor: '#999999'
+    backgroundColor: '#434343'
   },
   operators: {
     flex: 1,
-    backgroundColor: '#777777'
+    backgroundColor: '#636363'
   }
 });
