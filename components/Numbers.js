@@ -4,7 +4,7 @@ import styles from '../styles';
 
 const Numbers = props => {
     let numRows = [];
-    let nums = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ['.', 0, '=']]
+    let nums = [[7, 8, 9], [4, 5, 6], [1, 2, 3], ['.', 0, '=']]
     for(let i=0; i<nums.length; i++){
       let row = [];
       for(let j=0; j<nums[i].length; j++){

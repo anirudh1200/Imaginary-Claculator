@@ -12,29 +12,33 @@ import styles from './styles';
 import Numbers from './components/Numbers';
 import Operators from './components/Operators';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 type Props = {};
 export default class App extends Component<Props> {
 
+  // Here we are considering two inputs
+  // One that is being displayed to user
+  // And other with value of symbols
+  // Example: input = 7+π  =>  actualInput = 7+3.14159
   state = {
     input: '',
+    actualInput: '',
     result: '0'
   }
 
   calculateResult = () => {
-    let input = this.state.input;
+    let input = this.state.actualInput;
+    // To remove last char if we have operator in end
     if(this.operators.indexOf(input[input.length-1]) !=-1){
       input = input.slice(0, input.length-1);
       this.setState({input});
     }
+    // Evaluating result
     let result = eval(input);
-    this.setState({result});
+    this.setState({
+      result,
+      input: result,
+      actualInput: result
+    });
   }
 
   onNumberClick = (recievedNumber) => {
@@ -42,12 +46,14 @@ export default class App extends Component<Props> {
       return this.calculateResult();
     }
     this.setState({
-      input: this.state.input+recievedNumber
+      input: this.state.input+recievedNumber,
+      actualInput: this.state.actualInput+recievedNumber
     })
   }
 
   operate = (operator) => {
     let input = this.state.input;
+    let actualInput = this.state.actualInput;
     if(!input){
       return;
     }
@@ -55,25 +61,41 @@ export default class App extends Component<Props> {
       case 'C': 
           this.setState({
             input: '',
+            actualInput: '',
             result: '0'
           });
           break;
       case '<-':
           this.setState({
-            input: input.slice(0, input.length-1)
+            input: input.slice(0, input.length-1),
+            actualInput: actualInput.slice(0, actualInput.length-1)
+          });
+          break;
+      case 'π':
+          this.setState({
+            input: input+operator,
+            actualInput: actualInput+String(Math.PI)
+          });
+          break;
+      case 'e':
+          this.setState({
+            input: input+operator,
+            actualInput: actualInput+String(Math.E)
           });
           break;
       default:
+          // Preventing two operators together
           if(this.operators.indexOf(input[input.length-1]) !=-1){
             return;
           }
           this.setState({
-            input: input+operator
+            input: input+operator,
+            actualInput: actualInput+operator
           });
     }
   }
 
-  operators = ['C','<-','+', '-', '*', '/'];
+  operators = ['C','<-','+', '-', '*', '/','i', 'e', 'π'];
 
   render() {
     return (
